@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="picks-as-of" content="2026-06-03T16:35:52.812344Z" />
+<meta name="picks-stale-hours" content="12" />
+<title>Today's picks &mdash; Challenger tennis | Tennis Analytics</title>
+<style>
+  :root {
+    --ink: #1a1a1a;
+    --muted: #6a6a6a;
+    --soft: #8a8a8a;
+    --bg: #fafafa;
+    --card: #ffffff;
+    --rule: #ececec;
+    --rule-strong: #d6d6d6;
+    --link: #0b66c2;
+    --green: #1f8a4f;
+    --green-bg: #e3f3ea;
+    --amber: #b6791e;
+    --amber-bg: #fcf2dd;
+    --red:   #c0392b;
+    --red-bg: #fbe5e1;
+    --gray:  #6a6a6a;
+    --highlight: #fffae5;
+  }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+         line-height: 1.55; font-size: 15px; }
+  .wrap { max-width: 920px; margin: 0 auto; padding: 40px 24px 96px; }
+
+  h1 { font-size: 30px; margin: 0 0 8px; letter-spacing: -0.01em; line-height: 1.15; }
+  .lede { color: var(--muted); margin: 0 0 18px; font-size: 16px; }
+  .stamp { font-size: 13px; color: var(--muted); margin: 0 0 22px;
+           display: flex; gap: 18px; flex-wrap: wrap; align-items: center; }
+  .stamp .pulse {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green); box-shadow: 0 0 0 4px rgba(31,138,79,0.18);
+  }
+  .stamp .pulse.stale { background: var(--amber); box-shadow: 0 0 0 4px rgba(182,121,30,0.18); }
+  .stamp .pulse.failed { background: var(--red); box-shadow: 0 0 0 4px rgba(192,57,43,0.18); }
+
+  .disclaimer {
+    background: var(--card); border: 1px solid var(--rule); border-radius: 8px;
+    padding: 12px 16px; font-size: 13px; color: var(--muted);
+    margin: 0 0 36px;
+  }
+  .disclaimer strong { color: var(--ink); }
+
+  .tripwire-banner {
+    background: var(--red-bg); border: 1px solid var(--red);
+    border-left-width: 4px; border-radius: 8px;
+    padding: 14px 18px; margin: 0 0 24px;
+    font-size: 14px; color: var(--red);
+  }
+  .tripwire-banner strong { display: block; margin-bottom: 4px; font-size: 15px; }
+
+  .empty-callout {
+    background: var(--card); border: 1px solid var(--rule); border-radius: 10px;
+    padding: 20px 24px; text-align: center; color: var(--muted);
+    font-size: 14px; margin: 0 0 24px;
+  }
+  .empty-callout strong { display: block; margin-bottom: 6px; color: var(--ink); }
+
+  h2 { font-size: 20px; margin: 36px 0 14px; letter-spacing: -0.005em;
+       display: flex; align-items: baseline; gap: 12px; }
+  h2 .count { font-size: 13px; color: var(--soft); font-weight: 500; }
+  h3 { font-size: 16px; margin: 22px 0 8px; }
+
+  .pick {
+    background: var(--card); border: 1px solid var(--rule);
+    border-radius: 10px; padding: 16px 18px 14px; margin-bottom: 12px;
+    position: relative;
+  }
+  .pick .rank {
+    position: absolute; top: 16px; right: 18px;
+    font-size: 11px; color: var(--soft); text-transform: uppercase;
+    letter-spacing: 0.08em; font-weight: 600;
+  }
+  .pick-head {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 14px;
+    margin-bottom: 4px;
+  }
+  .matchup { font-size: 18px; font-weight: 600; letter-spacing: -0.005em; }
+  .matchup .pick-side { color: var(--green); }
+  .matchup .vs { color: var(--soft); margin: 0 4px; font-weight: 400; }
+  .tourney { font-size: 13px; color: var(--muted); }
+  .surface-tag {
+    display: inline-block; padding: 1px 7px; border-radius: 4px;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .surface-clay { background: #f5e3d4; color: #92521b; }
+  .surface-hard { background: #dde4f0; color: #1d3f73; }
+  .surface-grass { background: #dff0d8; color: #2d6a2d; }
+
+  .stats {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 8px 16px; margin: 12px 0 8px;
+    padding: 10px 0; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  }
+  .stat { font-size: 13px; line-height: 1.3; }
+  .stat .stat-label { color: var(--soft); font-size: 11px; text-transform: uppercase;
+                      letter-spacing: 0.05em; font-weight: 600; margin-bottom: 2px; }
+  .stat .stat-value { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .stat .stat-sub { font-size: 12px; color: var(--muted); margin-top: 1px; }
+
+  .stake-bucket {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 4px 9px; border-radius: 6px;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.02em;
+  }
+  .stake-1u { background: #ececec; color: #555; }
+  .stake-2u { background: var(--amber-bg); color: var(--amber); }
+  .stake-3u { background: var(--green-bg); color: var(--green); }
+
+  .edge-pos { color: var(--green); font-weight: 700; }
+  .edge-neg { color: var(--red); font-weight: 700; }
+  .edge-proxy { color: var(--muted); font-style: italic; }
+
+  .why { font-size: 13px; color: var(--muted); margin: 6px 0 0; line-height: 1.5; }
+  .why strong { color: var(--ink); font-weight: 600; }
+  .why .signal { display: inline-block; margin-right: 8px; }
+  .why .signal-arrow { color: var(--green); font-weight: 700; }
+  .track { font-size: 12px; color: var(--soft); margin-top: 4px; }
+  .track strong { color: var(--muted); font-weight: 600; }
+
+  .upcoming-row {
+    display: grid; grid-template-columns: 80px 1fr 90px 90px;
+    gap: 14px; padding: 10px 14px; border-bottom: 1px solid var(--rule);
+    font-size: 14px; align-items: center;
+  }
+  .upcoming-row:last-child { border-bottom: none; }
+  .upcoming-row .day { font-size: 12px; color: var(--muted); text-transform: uppercase;
+                       letter-spacing: 0.05em; font-weight: 600; }
+  .upcoming-row .matchup-small { font-weight: 500; }
+  .upcoming-row .matchup-small .pick-side { color: var(--green); font-weight: 600; }
+  .upcoming-row .matchup-small .meta { color: var(--muted); font-size: 12px;
+                                       display: block; margin-top: 1px; }
+  .upcoming-row .prob { font-variant-numeric: tabular-nums; text-align: right; font-size: 13px; }
+  .upcoming-wrap { background: var(--card); border: 1px solid var(--rule);
+                   border-radius: 10px; padding: 4px 0; }
+
+  /* Refresh-now link in the stamp row */
+  .refresh-link {
+    display: inline-flex; align-items: center; gap: 4px;
+    color: var(--link); text-decoration: none;
+    font-weight: 600;
+    padding: 4px 10px;
+    border: 1px solid #d4e2f1;
+    border-radius: 5px;
+    background: #f0f6fc;
+    transition: background 0.12s;
+  }
+  .refresh-link:hover { background: #e0ecf6; }
+  .refresh-link::after { content: " 97"; font-size: 12px; }
+
+  /* Freshness widget — hidden by default; JS shows it when data is stale */
+  .freshness-widget {
+    display: none;
+    background: var(--amber-bg); border: 1px solid #e0c987;
+    border-left: 4px solid var(--amber);
+    border-radius: 8px;
+    padding: 14px 18px; margin: 0 0 24px;
+    font-size: 14px; color: #6f5400;
+  }
+  .freshness-widget.show { display: block; }
+  .freshness-widget strong { font-size: 15px; color: var(--ink); }
+  .freshness-widget a {
+    color: var(--link); font-weight: 600;
+    text-decoration: underline;
+  }
+
+  /* Side-disagreement badge — surfaced when market backs the OPP */
+  .side-disagree-badge {
+    display: inline-block;
+    background: #e74c3c; color: white;
+    border-radius: 5px;
+    padding: 3px 9px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+    text-transform: uppercase;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+  .pick.side-disagreement {
+    border-left: 4px solid #e74c3c;
+  }
+  .market-backs-opp {
+    font-size: 12px; color: #c0392b; font-weight: 600;
+    margin-top: 1px;
+  }
+
+  /* All-predictions table */
+  .all-predictions-wrap {
+    background: var(--card); border: 1px solid var(--rule); border-radius: 10px;
+    overflow: hidden; margin: 8px 0 24px;
+  }
+  .all-predictions-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .all-predictions-table th {
+    background: #f3f3f3; color: var(--muted); font-size: 11px;
+    text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600;
+    text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--rule);
+  }
+  .all-predictions-table td {
+    padding: 9px 14px; border-bottom: 1px solid var(--rule);
+    vertical-align: middle;
+  }
+  .all-predictions-table tbody tr:last-child td { border-bottom: none; }
+  .all-predictions-table tbody tr.is-bettable { background: #fafff5; }
+  .all-predictions-table tbody tr.is-side-disagreement { background: #fff6f5; }
+  .all-predictions-table .matchup-cell { font-weight: 500; }
+  .all-predictions-table .matchup-cell .pick-side { color: var(--green); }
+  .all-predictions-table .matchup-cell .opp { color: var(--muted); }
+  .all-predictions-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .status-tag {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 7px; border-radius: 4px; letter-spacing: 0.02em;
+  }
+  .status-bettable { background: var(--green-bg); color: var(--green); }
+  .status-thin_history { background: #eee; color: #777; }
+  .status-below_gate { background: #eee; color: #777; }
+  .status-super_confident_skip { background: #ede5f5; color: #5e3a90; }
+  .status-no_market { background: #eee; color: #777; }
+  .status-below_gap { background: #eee; color: #777; }
+  .status-excluded { background: #eee; color: #777; }
+  .status-tripwire_active { background: var(--red-bg); color: var(--red); }
+  .side-disagree-cell { color: #c0392b; font-weight: 700; }
+
+  .about { background: var(--card); border: 1px solid var(--rule); border-radius: 10px;
+           padding: 18px 20px; font-size: 14px; margin-top: 16px; }
+  .about h3 { margin-top: 0; }
+  .about p { margin: 0 0 12px; color: var(--muted); }
+  .about .bucket-key { display: flex; gap: 14px; flex-wrap: wrap; margin: 10px 0 6px; }
+  .bucket-key .stake-bucket { font-size: 12px; padding: 3px 8px; }
+  .bucket-key .desc { font-size: 13px; color: var(--muted); }
+
+  footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--rule);
+            font-size: 12px; color: var(--muted); }
+  footer a { color: var(--link); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+
+
+<h1>Today's picks &mdash; Challenger tennis</h1><p class="lede">A shortlist of ATP Challenger matches where the model thinks there's an edge. Sorted by edge size, biggest first. For decision support, not auto-betting.</p><p class="lede refresh-prompt"><strong>About to bet?</strong> These picks are published by hand from a local machine, so this page only updates when a new batch is pushed. Reload to pull the latest published picks &mdash; the freshness check below tells you how stale what you're looking at is.</p><div class="stamp"><span><span class="pulse"></span> Last updated <strong>2026-06-03 17:35 UK</strong></span><span>Scraper: <strong>ok</strong></span><span>Today's picks: <strong>0</strong> &middot; This week: <strong>11</strong></span></div><div class="freshness-widget" id="freshness-widget"></div>
+
+
+
+
+<div class="disclaimer">
+  <strong>Disclaimer.</strong> This is a personal modelling experiment, not advice
+  and not a tipping service. I'm the only person who places bets from this page.
+  If you're following along, do your own homework &mdash; the model's edge is small,
+  it could be wrong about any individual match, and gambling losses are real.
+  Never bet more than you can afford to lose.
+</div>
+
+
+<h2>Today</h2><div class="empty-callout"><strong>No picks today.</strong>Too few high-confidence matches met the bar. Check back tomorrow.</div>
+
+<h2>This week &mdash; preview <span class="count">11 upcoming picks</span></h2><p class="lede" style="margin: -6px 0 14px; font-size: 14px;">Matches scheduled in the next 7 days that the model would pick if betting today. Subject to change as scrapes refresh.</p><div class="upcoming-wrap"><div class="upcoming-row"><div class="day">Thu 04</div><div class="matchup-small"><span class="pick-side">Alex Molcan</span> over Milos Karol<span class="meta">Prostejov CH R32 &middot; <span class="surface-tag surface-clay">Clay</span> &middot; TBD</span></div><div class="prob">80%</div><div class="prob"><span class="stake-bucket stake-3u">3U</span></div></div>
+<div class="upcoming-row"><div class="day">Thu 04</div><div class="matchup-small"><span class="pick-side">Pavel Kotov</span> over Yi Zhou<span class="meta">Busan CH R32 &middot; <span class="surface-tag surface-hard">Hard</span> &middot; TBD</span></div><div class="prob">78%</div><div class="prob"><span class="stake-bucket stake-3u">3U</span></div></div>
+<div class="upcoming-row"><div class="day">Thu 04</div><div class="matchup-small"><span class="pick-side">Kamil Majchrzak</span> over Felix Gill<span class="meta">Birmingham Open R32 &middot; <span class="surface-tag surface-grass">Grass</span> &middot; TBD</span></div><div class="prob">78%</div><div class="prob"><span class="stake-bucket stake-3u">3U</span></div></div>
+<div class="upcoming-row"><div class="day">Thu 04</div><div class="matchup-small"><span class="pick-side">Sebastian Baez</span> over Maxim Mrva<span class="meta">Prostejov CH R32 &middot; <span class="surface-tag surface-clay">Clay</span> &middot; TBD</span></div><div class="prob">75%</div><div class="prob"><span class="stake-bucket stake-3u">3U</span></div></div>
+<div class="upcoming-row"><div class="day">Thu 04</div><div class="matchup-small"><span class="pick-side">Vit Kopriva</span> over Vitaliy Sachko<span class="meta">Prostejov CH R32 &middot; <span class="surface-tag surface-clay">Clay</span> &middot; TBD</span></div><div class="prob">75%</div><div class="prob"><span class="stake-bucket stake-2u">2U</span></div></div>
+<div class="upcoming-row"><div class="day">Thu 04</div><div class="matchup-small"><span class="pick-side">Pablo Llamas Ruiz</span> over Jacopo Vasami<span class="meta">Internazionali di Tennis Città di Perugia R32 &middot; <span class="surface-tag surface-clay">Clay</span> &middot; TBD</span></div><div class="prob">73%</div><div class="prob"><span class="stake-bucket stake-2u">2U</span></div></div>
+<div class="upcoming-row"><div class="day">Thu 04</div><div class="matchup-small"><span class="pick-side">Daniel Merida Aguilar</span> over Liam Broady<span class="meta">Internazionali di Tennis Città di Perugia R32 &middot; <span class="surface-tag surface-clay">Clay</span> &middot; TBD</span></div><div class="prob">72%</div><div class="prob"><span class="stake-bucket stake-2u">2U</span></div></div>
+<div class="upcoming-row"><div class="day">Thu 04</div><div class="matchup-small"><span class="pick-side">Tristan Boyer</span> over Miguel Damas<span class="meta">Vicenza CH R32 &middot; <span class="surface-tag surface-clay">Clay</span> &middot; TBD</span></div><div class="prob">69%</div><div class="prob"><span class="stake-bucket stake-2u">2U</span></div></div>
+<div class="upcoming-row"><div class="day">Thu 04</div><div class="matchup-small"><span class="pick-side">Johannus Monday</span> over Blaise Bicknell<span class="meta">Tyler Tennis Championships R32 &middot; <span class="surface-tag surface-hard">Hard</span> &middot; TBD</span></div><div class="prob">69%</div><div class="prob"><span class="stake-bucket stake-2u">2U</span></div></div>
+<div class="upcoming-row"><div class="day">Thu 04</div><div class="matchup-small"><span class="pick-side">Marco Trungelliti</span> over Yu-Hsiou Hsu<span class="meta">Heilbronn II CH R32 &middot; <span class="surface-tag surface-clay">Clay</span> &middot; TBD</span></div><div class="prob">67%</div><div class="prob"><span class="stake-bucket stake-1u">1U</span></div></div>
+<div class="upcoming-row"><div class="day">Thu 04</div><div class="matchup-small"><span class="pick-side">Luca Nardi</span> over Hugo Grenier<span class="meta">Chisinau CH R32 &middot; <span class="surface-tag surface-hard">Hard</span> &middot; TBD</span></div><div class="prob">67%</div><div class="prob"><span class="stake-bucket stake-1u">1U</span></div></div></div>
+
+
+
+
+<h2>How this works</h2>
+
+<div class="about">
+  <h3>What "1U / 2U / 3U" means</h3>
+  <p>Stake size based on the model's edge vs the market. Pick your unit size once and stick with it. Most amateur bettors use 1U = 1% of bankroll.</p>
+  <div class="bucket-key">
+    <span class="stake-bucket stake-1u">1U</span><span class="desc">Edge &lt; 5pp <em>or</em> no market price &mdash; the smallest stake</span>
+  </div>
+  <div class="bucket-key">
+    <span class="stake-bucket stake-2u">2U</span><span class="desc">Model confidence in the gate band (&ge; 0.68) <em>or</em> 5-10pp market edge</span>
+  </div>
+  <div class="bucket-key">
+    <span class="stake-bucket stake-3u">3U</span><span class="desc">High-confidence band (&ge; 0.75) <em>or</em> &ge; 10pp market edge</span>
+  </div>
+
+  <h3 style="margin-top: 22px;">What "Market backs OPP" means</h3>
+  <p>The red badge fires when the model picks one player but the Polymarket close price has the OTHER player as favourite. These are the most contrarian picks &mdash; the model is taking a position the market actively disagrees with. They sort to the very top because the upside is the largest when the model is right.</p>
+
+  <h3>What "look for odds X or better" means</h3>
+  <p>The minimum decimal odds where the bet still has positive expected value, with a small safety margin. If the best price you can find is below this number, skip the bet &mdash; the market isn't offering enough.</p>
+
+  <h3>Why some picks have "no market"</h3>
+  <p>Polymarket doesn't list every Challenger match &mdash; only ones with enough trading volume. When there's no Polymarket price, the site falls back to ranking the pick against other picks by raw model confidence. That's labelled <em>"rank proxy"</em> with a percentile.</p>
+
+  <h3>What's in the "All of today's predictions" table</h3>
+  <p>The full panel of Challenger matches the model scored for the day &mdash; not just the bettable shortlist. Includes matches that fell below the 65% confidence gate, matches excluded because a player has too little recent history, and the rare "super-confident skip" cases where the model says &ge; 85% (those get auto-skipped because we don't have enough historical data at that band to trust the calibration yet, but you can still see the prediction).</p>
+
+  <h3>How refreshing works</h3>
+  <p>The page is static &mdash; it doesn't update on its own, and there's no button here that recomputes anything. New picks are published by hand: I run the full pipeline on my own machine (scrape today's Challenger results, rebuild the Elo ratings, refit the residual model, regenerate the picks JSON, render this HTML) and push the new version to the public site repo. None of that runs in the cloud. To see the latest published picks, just <strong>reload the page</strong>.</p>
+  <p>Because publishing is manual, the page can lag reality between runs. If the "last updated" stamp at the top is older than 12 hours, you'll see a yellow banner flagging exactly how stale the picks you're looking at are &mdash; treat that as your cue to check back later rather than bet on a stale board.</p>
+
+  <h3>Where the picks come from</h3>
+  <p>An ATP-Challenger-specific prediction model built since May 2026. Combines a tennis-Elo rating with a residual layer for surface, recent form, rest, qualifiers, and common-opponent strength. On 2024+2025 Challenger holdout, the model picks the right side <strong>~71% of the time</strong> on its bettable shortlist &mdash; above the 65% floor where the math works out.</p>
+  <p>Full writeup: <a href="../should-i-bet-summer-2026.html">Should I bet on Challenger tennis this summer?</a></p>
+</div>
+
+
+<footer>
+  Tennis Analytics &middot; published by hand from a local machine &middot;
+  site repo: <a href="https://github.com/gregtshea/tennis-picks">github.com/gregtshea/tennis-picks</a>
+</footer>
+
+</div>
+
+<script>
+(function() {
+  // Freshness widget — compute (now - as_of) at view time and surface a
+  // loud "Data is N hours old" warning if it's past the threshold. This
+  // catches the failure mode where the cached static page sits for days.
+  var meta = document.querySelector('meta[name="picks-as-of"]');
+  if (!meta || !meta.content) return;
+  var asOf = new Date(meta.content);
+  if (isNaN(asOf.getTime())) return;
+  var thresholdMeta = document.querySelector('meta[name="picks-stale-hours"]');
+  var threshold = thresholdMeta ? parseFloat(thresholdMeta.content) : 12;
+  var ageHours = (Date.now() - asOf.getTime()) / 1000 / 3600;
+  if (ageHours < threshold) return;
+  var widget = document.getElementById('freshness-widget');
+  if (!widget) return;
+  var ageDisplay = ageHours < 36 ? Math.round(ageHours) + ' hours' : Math.round(ageHours / 24) + ' days';
+  widget.innerHTML = (
+    '<strong>Data is ' + ageDisplay + ' old.</strong> ' +
+    'These picks are published by hand and have not been refreshed recently. ' +
+    'Reload the page to pull the latest published picks, and check back later if ' +
+    'this banner is still showing before betting.'
+  );
+  widget.classList.add('show');
+})();
+</script>
+
+</body>
+</html>
